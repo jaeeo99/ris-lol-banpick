@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import _ from 'lodash'
 import Layout from '../components/Layout'
 import ChampionGrid from '../components/ChampionGrid'
 import { IChampion } from '../interfaces';
@@ -12,14 +13,14 @@ const IndexPage = () => {
   const [championsList, setChampionsList] = useState([]);
   const getData = async () => {
     const data = await getChampionsData();
-    setChampionsList(data);
+    setChampionsList(_.sortBy(data, 'name'));
   }
   useEffect(() => {
     getData();
   }, []);
   return <Layout title="Home | Next.js + TypeScript Example">
     <h1>Hello Next.js 👋</h1>
-    <ChampionGrid data={championsList}/>
+    <ChampionGrid data={championsList} width={1000} height={500}/>
   </Layout>
 }
 
