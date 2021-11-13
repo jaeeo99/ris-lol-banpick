@@ -1,11 +1,13 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
 
 import { IChampion } from '../interfaces'
+import { LayoutContext } from '../context'
 
 type IChampionProps = {
   data: IChampion
+  onClick: any
 }
 
 const ChampionDiv = styled.div`
@@ -14,8 +16,9 @@ const ChampionDiv = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 10px;
-  width: 100px;
+  width: auto;
   height: 100px;
+  cursor: pointer;
 `
 
 const ChampionImg = styled.img`
@@ -23,21 +26,20 @@ const ChampionImg = styled.img`
   height: 60px;
 `;
 
-const ChampionItem = ({ data }: IChampionProps) => <ChampionDiv><ChampionImg alt={data?.id} src={data?.imageUrl}/>{data?.name}</ChampionDiv>
+const ChampionItem = ({ data, onClick }: IChampionProps) => 
+  <ChampionDiv onClick={() => onClick(data)}>
+    <ChampionImg alt={data?.id} src={data?.imageUrl}/>
+    <span>{data?.name}</span>
+  </ChampionDiv>
 
 type IChampionsProps = {
   data: IChampion[]
-  width?: number
-  height?: number
+  actions?: any
 }
 
 const ChampionsDiv = styled.div`
   position: relative;
-  display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(100px, auto));
-  gap: 20px;
-  padding-top: 40px;
-  overflow: scroll;
+  flex: 6;
   ${props => props.width && `
     width: ${props.width}px;
   `}
@@ -47,13 +49,24 @@ const ChampionsDiv = styled.div`
 `
 
 const ChampionSearch = styled.input` 
-  position: absolute; 
+  position: relative;
   width: calc(100% - 8px);
+  height: 30px;
 `
 
-const ChampionGrid = ({ data, width, height }: IChampionsProps) => {
+const ChampionList = styled.div`
+  height: calc(100% - 30px);
+  display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, auto));
+  gap: 20px;
+  overflow: scroll;
+`;
+
+const ChampionGrid = ({ data, actions }: IChampionsProps) => {
+  const { championPicked } = actions;
   const [search, setSearch] = useState('');
   const [filteredChampions, setFilteredChampions] = useState([]);
+  const {width, height} = useContext(LayoutContext);
   const onSearch = (e) => { setSearch(e.target.value)	}
   useEffect(() => {
     const uppercaseSearch = search.toUpperCase();
@@ -62,9 +75,11 @@ const ChampionGrid = ({ data, width, height }: IChampionsProps) => {
     });
     setFilteredChampions(filtered);
   }, [search, data]);
-  return <ChampionsDiv width={width} height={height}>
+  return <ChampionsDiv width={width * .6} height={height * .85}>
     <ChampionSearch type="text" onChange={onSearch} value={search}/>
-    {filteredChampions?.map((champion, idx) => <ChampionItem key={idx} data={champion}/>)}
+    <ChampionList>
+      {filteredChampions?.map((champion, idx) => <ChampionItem key={idx} data={champion} onClick={(champion) => championPicked(champion)}/>)}
+    </ChampionList>
   </ChampionsDiv>
 }
 

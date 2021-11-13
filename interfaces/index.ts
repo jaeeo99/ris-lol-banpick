@@ -21,7 +21,9 @@ type CHAMPION_STATUS = typeof CHAMPION_STATUS[keyof typeof CHAMPION_STATUS];
 export type IChampion = {
   id?: string
   name?: string
+  image?: any
   imageUrl?: string
+  splashUrl?: string
   status: CHAMPION_STATUS
 }
 
@@ -35,7 +37,6 @@ type BAN_STATUS = typeof BAN_STATUS[keyof typeof BAN_STATUS];
 export type IBan = {
   banned: IChampion[];
   status: BAN_STATUS;
-  phase?: number;
 }
 
 const PICK_STATUS = {
@@ -48,10 +49,13 @@ type PICK_STATUS = typeof PICK_STATUS[keyof typeof PICK_STATUS];
 export type IPick = {
   picked: IChampion[];
   status: PICK_STATUS;
-  phase?: number;
 }
 
 export type ITimer = {
   activate: boolean;
   time?: number;
+}
+
+export type IPhase = {
+  phase: number;
 }
